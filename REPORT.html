@@ -1,0 +1,166 @@
+<h1 id="scheduling-algorithms-in-xv6">Scheduling Algorithms in XV6</h1>
+<h2 id="first-come-first-served-fcfs-scheduling">First-Come,
+First-Served (FCFS) Scheduling</h2>
+<h3 id="explanation">Explanation</h3>
+<p>The FCFS (First-Come, First-Served) scheduling algorithm is
+straightforward and operates as follows:</p>
+<ol type="1">
+<li><p><strong>Process Iteration</strong>: The algorithm iterates
+through the process table, examining each process in sequential
+order.</p></li>
+<li><p><strong>Process Selection</strong>: When a runnable process is
+found, it is marked as “RUNNING,” indicating that it is currently
+executing.</p></li>
+<li><p><strong>Assignment to CPU</strong>: The process is assigned to
+the CPU’s <code>proc</code> field, and a context switch is performed
+using the <code>swtch</code> function.</p></li>
+<li><p><strong>Execution and Completion</strong>: After execution, the
+process is marked as not running (<code>c-&gt;proc = 0</code>).</p></li>
+</ol>
+<p>FCFS schedules processes in the order they arrive, making it simple
+to understand but potentially leading to poor responsiveness in
+scenarios with long-running processes.</p>
+<h2 id="round-robin-scheduling">Round Robin Scheduling</h2>
+<h3 id="explanation-1">Explanation</h3>
+<p>Round Robin is a time-sharing scheduling algorithm designed for
+fairness and timesharing. Here’s a detailed explanation of how Round
+Robin operates based on the provided code:</p>
+<ol type="1">
+<li><p><strong>Process Iteration</strong>: Similar to FCFS, the Round
+Robin algorithm begins by iterating through the process table. It
+examines each process sequentially.</p></li>
+<li><p><strong>Process Selection</strong>: When a runnable process is
+found (indicated by <code>p-&gt;state == RUNNABLE</code>), it is
+selected to run next. This process is marked as “RUNNING.”</p></li>
+<li><p><strong>Preemption and Time Slicing</strong>: Round Robin
+introduces preemption. The selected process is assigned to the CPU’s
+<code>proc</code> field (<code>c-&gt;proc = p</code>), and a context
+switch is performed. Round Robin schedules processes in a time-sliced
+manner, ensuring that each process gets a fair share of CPU
+time.</p></li>
+<li><p><strong>Fairness</strong>: The preemption and time-slicing
+mechanisms in Round Robin promote fairness by allowing multiple
+processes to run in a round-robin fashion. This ensures that no process
+monopolizes the CPU.</p></li>
+<li><p><strong>Completion</strong>: After a process completes its time
+slice or is preempted by another runnable process, it is marked as not
+running (<code>c-&gt;proc = 0</code>). The algorithm then proceeds to
+select the next runnable process in the queue.</p></li>
+</ol>
+<p>Round Robin is particularly well-suited for time-sharing
+environments, where it ensures that each process receives a fair amount
+of CPU time. However, the frequent context switches may introduce some
+overhead.</p>
+<h2 id="multi-level-feedback-queue-mlfq-scheduling">Multi-Level Feedback
+Queue (MLFQ) Scheduling</h2>
+<h3 id="explanation-2">Explanation</h3>
+<p>The Multi-Level Feedback Queue (MLFQ) scheduling algorithm is a
+dynamic and adaptable approach that combines multiple queues and aging
+mechanisms. Here’s a comprehensive explanation of how MLFQ operates
+based on the provided code:</p>
+<ol type="1">
+<li><p><strong>Aging and Priority Adjustment</strong>: The MLFQ
+algorithm starts by implementing an aging mechanism. Processes that have
+been waiting for a certain period (defined by <code>AGINGNUM</code>) are
+promoted to higher-priority queues. This mechanism prevents starvation
+by gradually boosting the priority of waiting processes.</p></li>
+<li><p><strong>Queue Assignment</strong>: Processes are initially
+assigned to queues based on their priority levels
+(<code>numQueue</code>). Lower-priority queues are typically assigned to
+processes that have higher time-sharing requirements, while
+higher-priority queues are for processes requiring immediate
+execution.</p></li>
+<li><p><strong>Process Selection</strong>: The algorithm continuously
+selects the highest-priority runnable process for execution. This
+selection ensures that processes with the most urgent needs are given
+precedence.</p></li>
+<li><p><strong>Fairness and Responsiveness</strong>: MLFQ introduces
+fairness and responsiveness by dynamically adjusting process priorities.
+Processes can move between queues based on their behavior and resource
+requirements. This adaptability makes MLFQ suitable for environments
+with varying workloads and priorities.</p></li>
+</ol>
+<p>MLFQ is a flexible scheduling algorithm that balances fairness and
+responsiveness. It prevents starvation through aging, ensures that
+processes with higher urgency are executed promptly.</p>
+<h2 id="graphs">Graphs</h2>
+<h3 id="aging---10-ticks">Aging - 10 Ticks</h3>
+<figure>
+<img src="../graphs/graph10.png" alt="graph10" />
+<figcaption aria-hidden="true">graph10</figcaption>
+</figure>
+<h3 id="aging---20-ticks">Aging - 20 Ticks</h3>
+<figure>
+<img src="../graphs/graph20.png" alt="graph20" />
+<figcaption aria-hidden="true">graph20</figcaption>
+</figure>
+<h3 id="aging---30-ticks">Aging - 30 Ticks</h3>
+<figure>
+<img src="../graphs/graph30.png" alt="graph30" />
+<figcaption aria-hidden="true">graph30</figcaption>
+</figure>
+<h3 id="aging---40-ticks">Aging - 40 Ticks</h3>
+<figure>
+<img src="../graphs/graph40.png" alt="graph40" />
+<figcaption aria-hidden="true">graph40</figcaption>
+</figure>
+<h3 id="aging---50-ticks">Aging - 50 Ticks</h3>
+<figure>
+<img src="../graphs/graph50.png" alt="graph50" />
+<figcaption aria-hidden="true">graph50</figcaption>
+</figure>
+<h3 id="aging---60-ticks">Aging - 60 Ticks</h3>
+<figure>
+<img src="../graphs/graph60.png" alt="graph60" />
+<figcaption aria-hidden="true">graph60</figcaption>
+</figure>
+<h2 id="performance-analysis">Performance Analysis</h2>
+<p>In this section, we analyze the performance of the scheduling
+algorithms based on the provided data. The data includes average running
+time (rtime) and waiting time (wtime) for different scheduling
+algorithms with varying numbers of CPUs (in parentheses).</p>
+<h3 id="fcfs-analysis">FCFS Analysis</h3>
+<h4 id="fcfs-1-cpu">FCFS (1 CPU)</h4>
+<ul>
+<li>Average rtime: 35</li>
+<li>Average wtime: 176</li>
+</ul>
+<h4 id="fcfs-8-cpus">FCFS (8 CPUs)</h4>
+<ul>
+<li>Average rtime: 64</li>
+<li>Average wtime: 100</li>
+</ul>
+<h3 id="round-robin-analysis">Round Robin Analysis</h3>
+<h4 id="rr-1-cpu">RR (1 CPU)</h4>
+<ul>
+<li>Average rtime: 35</li>
+<li>Average wtime: 240</li>
+</ul>
+<h4 id="rr-8-cpus">RR (8 CPUs)</h4>
+<ul>
+<li>Average rtime: 50</li>
+<li>Average wtime: 116</li>
+</ul>
+<h3 id="multi-level-feedback-queue-mlfq-analysis">Multi-Level Feedback
+Queue (MLFQ) Analysis</h3>
+<h4 id="mlfq-1-cpu">MLFQ (1 CPU)</h4>
+<ul>
+<li>Average rtime: 39</li>
+<li>Average wtime: 258</li>
+</ul>
+<h2 id="conclusion">Conclusion</h2>
+<p>In conclusion, the analysis of scheduling algorithms based on the
+provided data highlights the following insights:</p>
+<ul>
+<li>FCFS tends to have shorter rtime but longer wtime, especially when
+limited to a single CPU. It lacks prioritization, leading to inefficient
+resource utilization.</li>
+<li>RR provides better parallelism and reduced wtime with more CPUs but
+may introduce slightly longer rtime due to context switching.</li>
+<li>MLFQ exhibits dynamic behavior with varying rtime and wtime
+depending on factors like aging and the number of CPUs and runs
+relatively better than RR and FCFS under limited CPUs as shown in the
+higher rtime.</li>
+<li>It is important to note that MLFQ’s performance with 8 CPUs is not
+available in the provided data.</li>
+</ul>

@@ -1,0 +1,7 @@
+Using MLFQ
+
+xv6 kernel is booting
+
+init: starting sh
+$ QEMU: Terminated
+
